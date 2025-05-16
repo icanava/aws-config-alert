@@ -39,6 +39,10 @@ Added:
 
 These rules monitor S3 bucket access and flag public buckets as **NON_COMPLIANT**.
 
+🛠️ Troubleshooting:
+At one point, the S3 rules (s3-bucket-public-read-prohibited, etc.) weren’t flagging violations as expected. I discovered that public bucket policies don’t trigger these rules — only ACLs do. The fix was to enable ACLs and manually assign public permissions via the Access Control List (ACL) editor, not just through a policy.
+
+
 ---
 
 ### 3. Create SNS Topic  
@@ -63,6 +67,9 @@ Wrote a Python Lambda function that:
 - Extracts relevant details (bucket name, rule, region)
 - Publishes an SNS alert
 
+🛠️ Troubleshooting:
+The Lambda function initially wasn’t alerting even though test events worked. I eventually found out the issue was a hardcoded bucket name mismatch in the test JSON — I had "test-bucket-name" instead of my actual resource ID. Once corrected, alerts flowed properly on manual trigger.
+
 ---
 
 ### 6. Update IAM Role  
@@ -76,7 +83,8 @@ Added `sns:Publish` permissions to the Lambda execution role using the `AmazonSN
 <img src="https://github.com/user-attachments/assets/64d21e2c-918b-4ba4-af43-4e395f3a401c" alt="Event Rule" height="600"/>
 
 Configured EventBridge to listen for `Config Rules Compliance Change` events where complianceType is `NON_COMPLIANT`. Target = the Lambda function.
-
+🛠️ Troubleshooting:
+Despite the rule being created correctly, no alerts were being triggered automatically. After testing, I confirmed that EventBridge only fires when AWS Config sends a new compliance evaluation event. Some AWS Config rules (especially S3 public ACL rules) can be flaky or delayed, so for validation, I simulated a real event using an actual compliance violation JSON.
 ---
 
 ### 8. Simulated Violation & Email Alert  
