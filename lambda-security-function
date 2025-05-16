@@ -1,0 +1,26 @@
+import json
+import boto3
+
+sns = boto3.client('sns')
+SNS_TOPIC_ARN = 'arn:aws:sns:us-west-1:851725509861:SecurityAlertsTopic'
+
+def lambda_handler(event, context):
+    detail = event['detail']
+    
+    if detail['newEvaluationResult']['complianceType'] == 'NON_COMPLIANT':
+        resource_id = detail['resourceId']
+        rule_name = detail['configRuleName']
+        region = detail['awsRegion']
+        
+        message = f"ALERT: {rule_name} triggered.\nResource: {resource_id}\nRegion: {region}"
+        
+        sns.publish(
+            TopicArn=SNS_TOPIC_ARN,
+            Message=message,
+            Subject='AWS Config Security Alert'
+        )
+    
+    return {
+        'statusCode': 200,
+        'body': json.dumps('Alert sent (if non-compliant)')
+    }
