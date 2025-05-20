@@ -81,10 +81,11 @@ Added `sns:Publish` permissions to the Lambda execution role using the `AmazonSN
 
 ### 7. Create EventBridge Rule  
 <img src="https://github.com/user-attachments/assets/64d21e2c-918b-4ba4-af43-4e395f3a401c" alt="Event Rule" height="600"/>
-
 Configured EventBridge to listen for `Config Rules Compliance Change` events where complianceType is `NON_COMPLIANT`. Target = the Lambda function.
+
 🛠️ Troubleshooting:
 Despite the rule being created correctly, no alerts were being triggered automatically. After testing, I confirmed that EventBridge only fires when AWS Config sends a new compliance evaluation event. Some AWS Config rules (especially S3 public ACL rules) can be flaky or delayed, so for validation, I simulated a real event using an actual compliance violation JSON.
+
 ---
 
 ### 8. Simulated Violation & Email Alert  
