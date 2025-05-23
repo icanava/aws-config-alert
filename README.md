@@ -40,7 +40,7 @@ Added:
 These rules monitor S3 bucket access and flag public buckets as **NON_COMPLIANT**.
 
 🛠️ Troubleshooting:
-At one point, the S3 rules (s3-bucket-public-read-prohibited, etc.) weren’t flagging violations as expected. I discovered that public bucket policies don’t trigger these rules — only ACLs do. The fix was to enable ACLs and manually assign public permissions via the Access Control List (ACL) editor, not just through a policy.
+At one point, the S3 rules (s3-bucket-public-read-prohibited, etc.) weren’t flagging violations as expected. I discovered that public bucket policies don’t trigger these rules, only ACLs do. The fix was to enable ACLs and manually assign public permissions via the Access Control List (ACL) editor, not just through a policy.
 
 
 ---
@@ -68,7 +68,7 @@ Wrote a Python Lambda function that:
 - Publishes an SNS alert
 
 🛠️ Troubleshooting:
-The Lambda function initially wasn’t alerting even though test events worked. I eventually found out the issue was a hardcoded bucket name mismatch in the test JSON — I had "test-bucket-name" instead of my actual resource ID. Once corrected, alerts flowed properly on manual trigger.
+The Lambda function initially wasn’t alerting even though test events worked. I eventually found out the issue was a hardcoded bucket name mismatch in the test JSON, I had "test-bucket-name" instead of my actual resource ID. Once corrected, alerts flowed properly on manual trigger.
 
 ---
 
